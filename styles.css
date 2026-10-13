@@ -1,0 +1,753 @@
+/* ---------------------------------------------
+   Pause. Listen. Unfold.
+   Design tokens
+--------------------------------------------- */
+:root{
+  --bg:        #FEFCF8;
+  --bg-alt:    #FAF5EB;
+  --card:      #FFFEFC;
+  --ink:       #2B3228;
+  --ink-soft:  #2B3228;
+  --ink-faint: #2B3228;
+  --sage:      #6E7A5C;
+  --sage-deep: #4E5A40;
+  --clay:      #8C6B58;
+  --line:      #C7C0A4;
+  --line-soft: #DAD5C0;
+
+  --display: "Source Serif 4", serif;
+  --body: "IBM Plex Sans", sans-serif;
+
+  --wrap: min(1120px, 92vw);
+  --radius: 2px;
+
+  --ease: cubic-bezier(.45,0,.2,1);
+  --header-h: 76px;
+}
+
+@media (prefers-color-scheme: dark){
+  /* Intentionally kept light — the palette is the brand; no dark variant. */
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img{ max-width: 100%; display: block; }
+a{ color: inherit; }
+
+.wrap{ width: var(--wrap); margin-inline: auto; }
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+.skip-link{
+  position:absolute; left:-999px; top:0; background:var(--ink); color:var(--bg);
+  padding:.75rem 1rem; z-index: 999;
+}
+.skip-link:focus{ left: 1rem; top: 1rem; }
+
+:focus-visible{
+  outline: 2px solid var(--sage-deep);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------
+   Type
+--------------------------------------------- */
+.eyebrow{
+  font-family: var(--body);
+  font-size: .72rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+  margin: 0 0 .9rem;
+}
+
+.display-xl{
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(2.8rem, 7.5vw, 5.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.1rem;
+  color: var(--ink);
+}
+
+.display-md{
+  font-family: var(--display);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+  line-height: 1.12;
+  margin: 0 0 1rem;
+}
+
+.lede{
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  color: var(--ink-soft);
+  font-weight: 300;
+  max-width: 46ch;
+}
+
+.coming-soon-tag{
+  font-family: var(--body);
+  font-style: normal;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+p.coming-soon-tag{ margin: .2rem 0 0; }
+
+p{ margin: 0 0 1rem; }
+.section-body p:not(.lede){ max-width: 56ch; color: var(--ink); }
+
+.text-reduced p{
+  font-size: .88rem;
+  color: var(--ink-soft);
+}
+
+/* ---------------------------------------------
+   Header / Nav
+--------------------------------------------- */
+.site-header{
+  position: sticky; top: 0; z-index: 50;
+  background: var(--ink);
+  border-bottom: 1px solid rgba(0,0,0,.12);
+}
+.header-inner{
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 2rem;
+  padding: 1.1rem 0;
+}
+.brand{
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.brand-mark{
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.primary-nav{
+  display: flex; align-items: center;
+}
+.primary-nav a{
+  text-decoration: none;
+  font-size: .82rem;
+  letter-spacing: .04em;
+  color: var(--bg);
+  text-transform: uppercase;
+  transition: color .2s var(--ease);
+  margin-left: 2.4rem;
+}
+.primary-nav a:first-child{ margin-left: 0; }
+.primary-nav a:hover{ color: var(--line-soft); }
+.nav-cta{
+  border: 1px solid var(--bg);
+  padding: .5rem 1rem;
+  color: var(--bg) !important;
+}
+.nav-cta:hover{ background: var(--bg); color: var(--ink) !important; }
+
+.nav-toggle{
+  display: none;
+  background: none; border: 0; cursor: pointer;
+  width: 34px; height: 34px;
+  flex-direction: column; align-items: flex-end; justify-content: center; gap: 5px;
+}
+.nav-toggle span{
+  display: block; height: 1px; background: var(--bg); transition: all .25s var(--ease);
+}
+.nav-toggle span:nth-child(1){ width: 22px; }
+.nav-toggle span:nth-child(2){ width: 16px; }
+.nav-toggle span:nth-child(3){ width: 22px; }
+
+@media (max-width: 780px){
+  .nav-toggle{ display: flex; }
+  .primary-nav{
+    position: fixed; inset: 0 0 auto 0; top: 64px;
+    background: var(--bg);
+    flex-direction: column; align-items: flex-start;
+    padding: 1.5rem var(--wrap-pad, 6vw) 2rem;
+    gap: 1.3rem;
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s var(--ease);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .primary-nav a{ margin-left: 0; color: var(--ink-soft); }
+  .primary-nav a:hover{ color: var(--sage-deep); }
+  .primary-nav.open{
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-cta{
+    margin-top: .4rem;
+    border-color: var(--ink);
+    color: var(--ink) !important;
+  }
+  .nav-cta:hover{ background: var(--ink); color: var(--bg) !important; }
+}
+
+/* ---------------------------------------------
+   Hero
+--------------------------------------------- */
+.hero{
+  position: relative;
+  padding: 6.5rem 0 5rem;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-inner{ position: relative; z-index: 2; }
+
+.hero-mark{
+  width: 220px;
+  width: min(280px, 50vw);
+  margin: 0 auto 1.4rem;
+  opacity: .85;
+}
+.hero-mark img{ width: 100%; height: auto; display: block; }
+
+.hero-sub{
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  color: var(--ink-soft);
+  max-width: 34ch;
+  margin: 0 auto 1.6rem;
+}
+.hero-host{
+  font-size: 1.4rem;
+  letter-spacing: .01em;
+  color: var(--ink-faint);
+  margin-bottom: 2.4rem;
+}
+.hero-host span{ color: var(--ink); font-style: italic; font-weight: 500; font-family: var(--display); }
+
+.hero-actions{
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+}
+
+.btn{
+  display: inline-block;
+  padding: .85rem 1.6rem;
+  text-decoration: none;
+  font-size: .85rem;
+  letter-spacing: .03em;
+  border-radius: var(--radius);
+  transition: all .25s var(--ease);
+  border: 1px solid transparent;
+}
+.btn-primary{
+  background: var(--sage-deep);
+  color: var(--bg);
+}
+.btn-primary:hover{ background: var(--ink); }
+.hero .btn-primary{ background: var(--ink); }
+.hero .btn-primary:hover{ background: var(--sage-deep); }
+.btn-ghost{
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.btn-ghost:hover{ background: var(--ink); color: var(--bg); }
+
+.hero-invitation{
+  margin-top: 4rem;
+  display: grid;
+  gap: .6rem;
+}
+.hero .hero-invitation{ margin-top: 6rem; }
+.hero-invitation p{
+  font-family: var(--display);
+  font-size: clamp(1.017rem, calc(2.2vw - 1.33px), 1.317rem);
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.scroll-cue{
+  position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 38px; background: var(--line);
+  overflow: hidden;
+}
+.scroll-cue span{
+  position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+  background: var(--sage-deep);
+  animation: cue 2.6s var(--ease) infinite;
+}
+@keyframes cue{
+  0%{ top: -100%; } 60%{ top: 100%; } 100%{ top: 100%; }
+}
+
+/* ---------------------------------------------
+   Sections (general)
+--------------------------------------------- */
+.section{ padding: 5.5rem 0; }
+.section-alt{ background: var(--bg-alt); }
+
+/* Scroll-stacking panels. Each panel sits inside a taller "spacer" so it
+   stays fully visible and readable — including anything revealed via a
+   "Read more" toggle, via its own internal scroll if it's taller than one
+   screen — for a stretch of scrolling before the next panel begins to
+   cover it. Only once the spacer's extra height is used up does the next
+   panel's top approach the nav bar and the hand-off begin. The outgoing
+   panel's opacity is then driven by JS (see script.js) so it fades away
+   completely rather than just sitting visibly layered underneath. */
+.stack-spacer{
+  position: relative;
+  min-height: 165vh;
+}
+.stack-panel{
+  position: sticky;
+  top: var(--header-h);
+  scroll-margin-top: var(--header-h);
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
+}
+.js-ready .stack-panel{ transition: opacity .15s linear; }
+
+#top{ z-index: 1; }
+#experiences{ z-index: 2; }
+#musicianship{ z-index: 3; }
+#sessions{ z-index: 4; }
+#questions{ z-index: 5; }
+#about{ z-index: 6; }
+#contact{ z-index: 7; }
+
+/* Fade each panel's content in whenever it scrolls into view, and back out
+   if scrolled away from, so the effect repeats every time — not just once. */
+.js-ready .reveal-fade{
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+}
+.js-ready .reveal-fade.in-view{ opacity: 1; transform: translateY(0); }
+
+.section-grid{
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 3rem;
+  align-items: start;
+}
+.section-grid.reverse{ grid-template-columns: .8fr 1.2fr; }
+.section-grid.reverse .section-label{ order: 1; }
+.section-grid.reverse .section-body{ order: 2; }
+
+.section-heading{ max-width: 60ch; margin-bottom: 3rem; }
+
+/* About */
+.about-grid{
+  display: grid;
+  grid-template-columns: .85fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.about-photo{ min-width: 0; max-width: 400px; }
+.about-photo img{
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 20%;
+  display: block;
+  border-radius: var(--radius);
+  filter: grayscale(8%);
+}
+.about-body{ min-width: 0; }
+.about-body .eyebrow{ margin-bottom: 1.4rem; }
+.about-body .lede{ max-width: 34ch; }
+
+.quiet-list{
+  list-style: none; margin: 1.6rem 0 0; padding: 0;
+  display: grid; gap: .65rem;
+}
+.quiet-list li{
+  padding-left: 1.3rem;
+  position: relative;
+  color: var(--ink-soft);
+  font-size: .95rem;
+}
+.quiet-list li::before{
+  content: "";
+  position: absolute; left: 0; top: .55em;
+  width: 6px; height: 1px; background: var(--sage);
+}
+
+.divider{ color: var(--line); width: 100%; margin-top: 4rem; }
+.divider svg{ width: 100%; height: 30px; display: block; }
+
+/* ---------------------------------------------
+   Experiences cards
+--------------------------------------------- */
+.card-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.4rem;
+}
+.card-grid-single{
+  grid-template-columns: minmax(0, 22rem);
+  justify-content: center;
+  text-align: center;
+}
+.card{
+  background: var(--card);
+  border: 1px solid var(--ink);
+  padding: 1.8rem;
+  border-radius: var(--radius);
+}
+.card-btn.btn-primary{ background: var(--ink); }
+.card-btn.btn-primary:hover{ background: var(--sage-deep); }
+.card-btn{
+  margin-top: .4rem;
+  padding: .6rem 1.2rem;
+  font-size: .82rem;
+}
+.card-sketch{
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  margin: -1.2rem 0 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+.card h3{
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.25rem;
+  margin: 0 0 .6rem;
+}
+.card p{ color: var(--ink-soft); font-size: .93rem; }
+.card .meta{
+  color: var(--ink-faint);
+  font-size: .78rem;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  margin: 0.8rem 0 0;
+}
+.section-note{
+  margin-top: 2.4rem;
+  font-size: .9rem;
+  color: var(--ink-faint);
+}
+.section-note a{ color: var(--sage-deep); text-decoration: underline; }
+
+/* ---------------------------------------------
+   One-to-one
+--------------------------------------------- */
+.info-rows{
+  margin: 1.8rem 0 2rem;
+  border-top: 1px solid var(--line-soft);
+}
+.info-row{
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1rem;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.info-label{
+  font-size: .78rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+}
+.info-value{ color: var(--ink-soft); font-size: .95rem; }
+
+/* ---------------------------------------------
+   Booking widget
+--------------------------------------------- */
+.booking-widget{
+  margin-top: 2.2rem;
+}
+.booking-panel{
+  margin-top: 1.6rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line-soft);
+}
+.booking-title{
+  font-family: var(--display);
+  font-size: 1.4rem;
+  margin: 0 0 .3rem;
+}
+.booking-intro{
+  color: var(--ink-soft);
+  font-size: .9rem;
+  margin: 0 0 1.2rem;
+}
+.booking-calendar{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.booking-date-btn{
+  font-family: var(--body);
+  font-size: .82rem;
+  padding: .55rem .9rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all .2s var(--ease);
+  text-align: left;
+  line-height: 1.3;
+}
+.booking-date-btn strong{ display: block; font-size: .78rem; color: var(--ink-faint); font-weight: 500; }
+.booking-date-btn:hover{ border-color: var(--sage-deep); }
+.booking-date-btn.selected{
+  background: var(--sage-deep);
+  border-color: var(--sage-deep);
+  color: var(--bg);
+}
+.booking-date-btn.selected strong{ color: var(--bg); opacity: .8; }
+
+.booking-slots{
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+.booking-slot-btn{
+  font-family: var(--body);
+  font-size: .82rem;
+  padding: .5rem 1rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all .2s var(--ease);
+}
+.booking-slot-btn:hover{ border-color: var(--sage-deep); }
+.booking-slot-btn.selected{
+  background: var(--sage-deep);
+  border-color: var(--sage-deep);
+  color: var(--bg);
+}
+
+.booking-form{
+  display: grid;
+  gap: .3rem;
+  max-width: 26rem;
+}
+.booking-selection{
+  font-size: .85rem;
+  color: var(--sage-deep);
+  margin: 0 0 .4rem;
+}
+.booking-form label{
+  font-size: .78rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: .7rem;
+}
+.booking-form input{
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1rem;
+  padding: .5rem 0;
+  outline: none;
+}
+.booking-form input:focus{ border-bottom-color: var(--sage-deep); }
+.booking-form .btn{ margin-top: 1.2rem; justify-self: start; }
+
+/* ---------------------------------------------
+   Living Questions
+--------------------------------------------- */
+.questions-section .section-heading{ text-align: center; margin-inline: auto; }
+.questions-list{
+  list-style: none; margin: 0 auto; padding: 0;
+  max-width: 46rem;
+  display: grid; gap: 0;
+}
+.questions-list li{
+  font-family: var(--display);
+  font-size: clamp(.95rem, 1.8vw, 1.15rem);
+  color: var(--ink);
+  text-align: center;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.questions-list li:last-child{ border-bottom: none; }
+
+/* Reveal-on-scroll only applies once JS confirms it can run the effect;
+   otherwise (no JS, or reduced motion) every question is simply visible. */
+.js-ready .questions-list li{
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
+}
+.js-ready .questions-list li.in-view{ opacity: 1; transform: translateY(0); }
+
+/* ---------------------------------------------
+   Footer / Contact
+--------------------------------------------- */
+.site-footer{
+  background: var(--ink);
+  color: var(--bg);
+  padding: 5.5rem 0 2rem;
+}
+.footer-inner{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+}
+.site-footer .eyebrow{ color: var(--line-soft); margin-bottom: 1.6rem; }
+.site-footer .display-md{ color: var(--bg); }
+.footer-intro p{ color: #C9CEC2; max-width: 42ch; }
+.footer-mark{
+  width: 120px;
+  height: auto;
+  margin: 0 0 1.4rem;
+  opacity: .8;
+}
+.footer-meta{ margin-top: 1.8rem; font-size: .92rem; color: #C9CEC2; }
+.footer-meta p{ margin: 0 0 .3rem; }
+.footer-meta a{ color: var(--bg); text-decoration: none; }
+.footer-intro .footer-tagline{
+  display: block;
+  white-space: nowrap;
+  color: var(--line-soft);
+  margin: 0 0 1.4rem;
+}
+
+.contact-form{
+  display: grid;
+  gap: .3rem;
+}
+.contact-form label{
+  font-size: .78rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #A8AF9C;
+  margin-top: .9rem;
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea{
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #4A5240;
+  color: var(--bg);
+  font-family: var(--body);
+  font-size: 1rem;
+  padding: .6rem 0;
+  outline: none;
+}
+.contact-form select option{ color: var(--ink); }
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus{
+  border-bottom-color: var(--sage);
+}
+.contact-form textarea{ resize: vertical; }
+.contact-form .btn{ margin-top: 1.6rem; justify-self: start; }
+.hidden-field{ position: absolute; left: -9999px; }
+.form-note{ font-size: .85rem; color: var(--sage); min-height: 1.2em; }
+
+.footer-bottom{
+  margin-top: 4rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid #40473A;
+  font-size: .78rem;
+  color: #8A9080;
+}
+
+/* ---------------------------------------------
+   Responsive
+--------------------------------------------- */
+.read-more{ margin-top: 1.4rem; }
+.read-more-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--body);
+  font-size: .85rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--sage-deep);
+  padding-bottom: .2rem;
+  border-bottom: 1px solid var(--line);
+  transition: color .25s var(--ease), border-color .25s var(--ease);
+}
+.read-more-toggle::-webkit-details-marker{ display: none; }
+.read-more-toggle::after{
+  content: "+";
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: transform .25s var(--ease);
+}
+.read-more[open] .read-more-toggle::after{ transform: rotate(45deg); }
+.read-more-toggle:hover{ color: var(--ink); border-color: var(--ink); }
+.read-more-content{
+  overflow: hidden;
+  animation: readMoreIn .35s var(--ease);
+}
+.read-more-content > *:first-child{ margin-top: 2.2rem; }
+@keyframes readMoreIn{
+  from{ opacity: 0; transform: translateY(-4px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px){
+  .section-grid, .section-grid.reverse{
+    grid-template-columns: 1fr;
+  }
+  .section-grid.reverse .section-label,
+  .section-grid.reverse .section-body{ order: initial; }
+  .about-grid{ grid-template-columns: 1fr; }
+  .card-grid{ grid-template-columns: 1fr; }
+  .footer-inner{ grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px){
+  .hero{ padding: 4.5rem 0 3.5rem; }
+  .section{ padding: 4rem 0; }
+  .info-row{ grid-template-columns: 1fr; gap: .2rem; }
+}
+
+.booking-pending{
+  margin: 1.2rem 0 0;
+  padding: 1.1rem 1.3rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+}
+.booking-pending strong{ font-family: var(--display); font-weight: 500; font-size: 1.15rem; }
+.booking-pending span{ font-size: .92rem; }
+
+
+.about-quote{
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  color: var(--ink);
+  margin: 0 0 1.2rem;
+}
