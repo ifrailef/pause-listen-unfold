@@ -413,6 +413,10 @@ p{ margin: 0 0 1rem; }
   padding: 1.8rem;
   border-radius: var(--radius);
 }
+.card-grid .card{ display: flex; flex-direction: column; }
+.card-grid .card .meta{ margin-top: auto; padding-top: .8rem; }
+.card-grid .card .card-btn{ align-self: flex-start; }
+.card-grid .card .card-sketch{ flex-shrink: 0; }
 .card-btn.btn-primary{ background: var(--ink); }
 .card-btn.btn-primary:hover{ background: var(--sage-deep); }
 .card-btn{
@@ -751,3 +755,4 @@ p{ margin: 0 0 1rem; }
   color: var(--ink);
   margin: 0 0 1.2rem;
 }
+.about-quote.about-quote-sm{ font-size: clamp(.95rem, 1.6vw, 1.1rem); }

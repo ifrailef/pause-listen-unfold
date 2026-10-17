@@ -97,13 +97,35 @@ if (revealEls.length && canAnimateOnScroll) {
   revealEls.forEach(el => revealIO.observe(el));
 }
 
-// Contact form: friendly inline confirmation (Netlify handles the actual submission)
+// Contact form: sent in the background to Netlify Forms, with a message on the page.
 const contactForm = document.querySelector('.contact-form');
 const formNote = document.getElementById('formNote');
+const FALLBACK_EMAIL = 'pauselistenunfold@posteo.com';
+function sendToNetlify(form) {
+  const body = new URLSearchParams(new FormData(form)).toString();
+  return fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body
+  }).then((res) => {
+    if (!res.ok) throw new Error('Form was not accepted (' + res.status + ')');
+  });
+}
 if (contactForm && formNote) {
-  contactForm.addEventListener('submit', () => {
-    // Let Netlify's default form handling proceed (native submit/redirect).
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const button = contactForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
     formNote.textContent = 'Sending…';
+    sendToNetlify(contactForm)
+      .then(() => {
+        contactForm.reset();
+        formNote.textContent = 'Thank you. Your message has been sent and I will be in touch soon.';
+      })
+      .catch(() => {
+        formNote.textContent = 'Sorry, your message could not be sent. Please write to ' + FALLBACK_EMAIL + ' instead.';
+      })
+      .finally(() => { if (button) button.disabled = false; });
   });
 }
 
@@ -213,15 +235,20 @@ if (bookingToggle && bookingPanel && bookingCalendar && bookingSlots && bookingF
 
   bookingForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    // Send the booking to Netlify in the background (a no-op outside Netlify).
-    try {
-      const body = new URLSearchParams(new FormData(bookingForm)).toString();
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      }).catch(() => {});
-    } catch (err) { /* ignore */ }
-    renderPending();
+    const button = bookingForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+    sendToNetlify(bookingForm)
+      .then(() => { renderPending(); })
+      .catch(() => {
+        if (button) button.disabled = false;
+        let err = bookingForm.querySelector('.booking-error');
+        if (!err) {
+          err = document.createElement('p');
+          err.className = 'form-note booking-error';
+          err.setAttribute('role', 'status');
+          bookingForm.appendChild(err);
+        }
+        err.textContent = 'Sorry, your booking could not be sent. Please write to ' + FALLBACK_EMAIL + ' instead.';
+      });
   });
 }

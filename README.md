@@ -10,7 +10,7 @@ Plain HTML/CSS/JS: no build step, no dependencies. Easy to host on GitHub + Netl
 index.html      All page content and structure
 styles.css      All design (colors, type, layout, animation)
 script.js       Mobile menu, scroll effects, booking calendar, form feedback
-favicon.svg     Browser tab icon
+favicon.ico, favicon-*.png, apple-touch-icon.png   Browser tab / phone icons (made from the main logo)
 assets/         Logos, About photo, Inquiry Circle and Common Ground sketches
 netlify.toml    Netlify build/publish + security header settings
 ```
