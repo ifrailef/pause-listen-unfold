@@ -2,7 +2,7 @@
 
 Website for Irene Fraile Fuente's holistic counselling & embodied musicianship practice.
 
-Plain HTML/CSS/JS with a Netlify function for form emails. The build copies only public website assets into `public/`; email code and configuration stay outside the published directory.
+Plain HTML/CSS/JS with native Netlify Forms email notifications. The build copies only public website assets into `public/`.
 
 ## Files
 
@@ -54,31 +54,19 @@ The contact form and the "Book Free Orientation Call" booking form both use **Ne
 (`data-netlify="true"`). They only deliver submissions once the site is hosted on Netlify.
 Enable form detection in Netlify **Forms**, then redeploy. Submissions appear under **Forms**.
 
-### Email setup (required before emails can be delivered)
+### Email setup — same system as nicolomantini.com
 
-The `submission-created` function sends two separate emails after Netlify verifies a contact or booking submission:
+The reference site's live Netlify configuration was inspected: one native `email` notification on the `submission_created` event, for all forms, addressed to the owner. No custom email function or visitor autoresponder is deployed there.
 
-- Irene receives the submitted details at `pauselistenunfold@posteo.com`; Reply addresses the visitor.
-- The visitor receives a fixed acknowledgment; Reply addresses Irene. Booking emails acknowledge a request, not a confirmed appointment.
+In Irene's Netlify project, go to **Configuration > Notifications > Form submission notifications > Add notification > Email notification** (also accessible from Forms). Set the recipient to `pauselistenunfold@posteo.com` and select all forms, or add one notification each for `contact` and `booking`. Do not add duplicates if this notification already exists. This dashboard setting is required and cannot be enabled by HTML or `netlify.toml`; saving the notification does not require a new deploy.
 
-Posteo is the default sender. In Netlify **Project configuration > Environment variables**, add `SMTP_PASSWORD` with Irene's Posteo password for SMTP (or the applicable app password). Scope it to **Functions** and the production deploy context. Do not put it in `netlify.toml`.
+The visitor's `email` field lets Irene reply to the visitor. Both forms include a subject field with a unique submission identifier, matching the reference site's approach. Netlify stores the submitted message and sends the owner notification through its own mail service; Irene's mailbox password is not used.
 
-These settings are already supplied by the code and only need environment variables if overriding them:
+This matches the reference site: it sends owner notifications, not automatic confirmation emails to visitors. Visitors see an on-page acknowledgment. Booking requests remain pending until Irene replies.
 
-| Variable | Value |
-| --- | --- |
-| `SMTP_HOST` | `posteo.de` |
-| `SMTP_PORT` | `465` (TLS) |
-| `SMTP_USER` | `pauselistenunfold@posteo.com`; override if Irene's Posteo login differs |
-| `MAIL_FROM` | `pauselistenunfold@posteo.com` |
+The previous `submission-created` SMTP function has been removed. The `SMTP_*`, `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_OWNER`, and `MAIL_REPLY_TO` environment variables are no longer used and can be removed from Irene's Netlify settings. Revoke any exposed Resend key in Resend itself.
 
-Enter secrets directly in Netlify, never in site files or chat. Redeploy after setting them. Deploy using the connected Git repository or Netlify CLI with functions support; uploading only the static website folder does not deploy the email function.
-
-The form's on-page success message confirms Netlify received the submission, not email delivery. Check the `submission-created` function logs for delivery failures. A successful SMTP response means the mail server accepted the emails; check both recipient inboxes and spam folders to confirm arrival.
-
-If native Netlify email notifications are already configured for Irene, remove the duplicate notification only after testing the function successfully. The function itself sends Irene's copy.
-
-Run `npm ci`, `npm test`, and `npm run build` locally. Tests use a fake mail sender and send no real messages. A live submission is still required to verify Netlify's event trigger and both inboxes. There is no durable retry queue: if sending fails, the original submission remains in Netlify for follow-up; replaying an event can duplicate an already-sent email.
+Run `npm test` and `npm run build` locally. Tests send no real emails. Basic localhost/file previews display an explicit preview message and preserve the entered data, as on the reference website. A live submission is required to confirm that Netlify's notification reaches Irene's inbox; local tests cannot verify that external setting.
 
 The booking calendar is a lightweight picker: it does not check Irene's real calendar.
 

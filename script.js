@@ -102,11 +102,20 @@ const contactForm = document.querySelector('.contact-form');
 const formNote = document.getElementById('formNote');
 const FALLBACK_EMAIL = 'pauselistenunfold@posteo.com';
 function sendToNetlify(form) {
-  const body = new URLSearchParams(new FormData(form)).toString();
+  if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) || location.protocol === 'file:') {
+    return Promise.resolve({ preview: true });
+  }
+  const body = new URLSearchParams();
+  for (const [key, value] of new FormData(form)) {
+    body.set(key, String(value).replace(/[\u200B-\u200D\uFEFF]/g, '').trim());
+  }
+  const name = (body.get('name') || '').replace(/[\r\n]+/g, ' ').slice(0, 120);
+  const kind = body.get('form-name') === 'booking' ? 'Orientation call request' : 'New contact';
+  body.set('subject', `${kind} — ${name} — ${crypto.randomUUID()}`);
   return fetch('/', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
+    body: body.toString()
   }).then((res) => {
     if (!res.ok) throw new Error('Form was not accepted (' + res.status + ')');
   });
@@ -115,10 +124,15 @@ if (contactForm && formNote) {
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const button = contactForm.querySelector('button[type="submit"]');
+    if (button && button.disabled) return;
     if (button) button.disabled = true;
     formNote.textContent = 'Sending…';
     sendToNetlify(contactForm)
-      .then(() => {
+      .then((result) => {
+        if (result?.preview) {
+          formNote.textContent = 'The form is filled in correctly. No request is sent in local preview.';
+          return;
+        }
         contactForm.reset();
         formNote.textContent = 'Thank you. Your message has been sent and I will be in touch soon.';
       })
@@ -236,9 +250,17 @@ if (bookingToggle && bookingPanel && bookingCalendar && bookingSlots && bookingF
   bookingForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const button = bookingForm.querySelector('button[type="submit"]');
+    if (button && button.disabled) return;
     if (button) button.disabled = true;
     sendToNetlify(bookingForm)
-      .then(() => { renderPending(); })
+      .then((result) => {
+        if (result?.preview) {
+          document.getElementById('bookingNote').textContent = 'The form is filled in correctly. No request is sent in local preview.';
+          if (button) button.disabled = false;
+          return;
+        }
+        renderPending();
+      })
       .catch(() => {
         if (button) button.disabled = false;
         let err = bookingForm.querySelector('.booking-error');

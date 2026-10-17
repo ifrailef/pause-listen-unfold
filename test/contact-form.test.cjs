@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const source = readFileSync('script.js', 'utf8');
 const contactCode = source.slice(source.indexOf('// Contact form:'), source.indexOf('// Booking widget:'));
 
-function loadForm(fetch) {
+function loadForm(fetch, hostname = 'pauselistenunfold.com') {
   const button = { disabled: false };
   const note = { textContent: '' };
   let submit;
@@ -20,6 +20,8 @@ function loadForm(fetch) {
     document: { querySelector: () => form, getElementById: () => note },
     FormData: class { constructor(f) { return f.fields; } },
     URLSearchParams,
+    location: { hostname, protocol: hostname ? 'https:' : 'file:' },
+    crypto: require('node:crypto').webcrypto,
     fetch
   });
   return { form, button, note, submit: () => submit({ preventDefault() {} }) };
@@ -62,3 +64,67 @@ for (const failure of ['server', 'network']) {
     assert.match(ui.note.textContent, /pauselistenunfold@posteo.com/);
   });
 }
+
+for (const hostname of ['localhost', '127.0.0.1', '[::1]', '']) {
+  test(`local preview ${hostname || 'file'} preserves data and sends no request`, async () => {
+    const ui = loadForm(() => { throw new Error('Local preview must not submit'); }, hostname);
+    ui.submit();
+    await settle();
+    assert.match(ui.note.textContent, /No request is sent/);
+    assert.equal(ui.form.resets, 0);
+    assert.equal(ui.button.disabled, false);
+  });
+}
+
+test('duplicate clicks send only one pending request', async () => {
+  let requests = 0, finish;
+  const ui = loadForm(() => { requests++; return new Promise(resolve => { finish = resolve; }); });
+  ui.submit(); ui.submit();
+  assert.equal(requests, 1);
+  finish({ ok: true });
+  await settle();
+});
+
+test('native notification subjects have unique identifiers and sanitized names', async () => {
+  const subjects = [];
+  const ui = loadForm((url, options) => {
+    subjects.push(new URLSearchParams(options.body).get('subject'));
+    return Promise.resolve({ ok: true });
+  });
+  ui.form.fields[1][1] = '  Test\nName\u200B  ';
+  ui.submit(); await settle();
+  ui.submit(); await settle();
+  assert.match(subjects[0], /^New contact — Test Name — /);
+  assert.notEqual(subjects[0], subjects[1]);
+  assert.doesNotMatch(subjects[0], /[\r\n\u200B]/);
+});
+
+function loadBooking(sendToNetlify) {
+  let submit, pending = 0;
+  const button = { disabled: false }, note = { textContent: '' };
+  const form = { querySelector: () => button, addEventListener: (event, callback) => { submit = callback; } };
+  const start = source.indexOf("  bookingForm.addEventListener('submit'");
+  const code = source.slice(start, source.lastIndexOf('\n}'));
+  vm.runInNewContext(code, {
+    bookingForm: form, sendToNetlify, renderPending: () => { pending++; },
+    document: { getElementById: () => note }, FALLBACK_EMAIL: 'pauselistenunfold@posteo.com'
+  });
+  return { button, note, submit: () => submit({ preventDefault() {} }), pending: () => pending };
+}
+
+test('booking preview keeps form usable without displaying a real pending request', async () => {
+  const ui = loadBooking(() => Promise.resolve({ preview: true }));
+  ui.submit(); await settle();
+  assert.equal(ui.pending(), 0);
+  assert.equal(ui.button.disabled, false);
+  assert.match(ui.note.textContent, /No request is sent/);
+});
+
+test('accepted live booking displays pending confirmation once', async () => {
+  let requests = 0, finish;
+  const ui = loadBooking(() => { requests++; return new Promise(resolve => { finish = resolve; }); });
+  ui.submit(); ui.submit();
+  assert.equal(requests, 1);
+  finish(); await settle();
+  assert.equal(ui.pending(), 1);
+});

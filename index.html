@@ -163,6 +163,7 @@
 
             <form class="booking-form" id="bookingForm" name="booking" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="booking-bot-field" hidden>
               <input type="hidden" name="form-name" value="booking">
+              <input type="hidden" name="subject" data-remove-prefix value="Orientation call request — %{submissionId}">
               <input type="hidden" name="date" id="bookingDateField">
               <input type="hidden" name="time" id="bookingTimeField">
               <p class="hidden-field"><label>Don't fill this out if you're human: <input name="booking-bot-field"></label></p>
@@ -244,6 +245,7 @@
 
       <form class="contact-form" name="contact" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="contact">
+        <input type="hidden" name="subject" data-remove-prefix value="New contact — %{submissionId}">
         <p class="hidden-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
 
         <label for="name">Name</label>
