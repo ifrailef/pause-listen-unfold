@@ -2,7 +2,7 @@
 
 Website for Irene Fraile Fuente's holistic counselling & embodied musicianship practice.
 
-Plain HTML/CSS/JS: no build step, no dependencies. Easy to host on GitHub + Netlify and to edit by hand.
+Plain HTML/CSS/JS with a Netlify function for form emails. The build copies only public website assets into `public/`; email code and configuration stay outside the published directory.
 
 ## Files
 
@@ -45,15 +45,40 @@ git push
 ## Deploy on Netlify
 
 1. app.netlify.com > **Add new site > Import an existing project** > choose this GitHub repository.
-2. Leave **Build command** empty and **Publish directory** as `.` (already set in `netlify.toml`).
+2. Use **Build command** `npm run build` and **Publish directory** `public` (set in `netlify.toml`).
 3. Click **Deploy**. Netlify redeploys automatically on every `git push`.
 
 ## Forms
 
 The contact form and the "Book Free Orientation Call" booking form both use **Netlify Forms**
 (`data-netlify="true"`). They only deliver submissions once the site is hosted on Netlify.
-Submissions appear under **Forms** in the Netlify dashboard; set up email notifications under
-**Site settings > Forms > Form notifications**.
+Enable form detection in Netlify **Forms**, then redeploy. Submissions appear under **Forms**.
+
+### Email setup (required before emails can be delivered)
+
+The `submission-created` function sends two separate emails after Netlify verifies a contact or booking submission:
+
+- Irene receives the submitted details at `pauselistenunfold@posteo.com`; Reply addresses the visitor.
+- The visitor receives a fixed acknowledgment; Reply addresses Irene. Booking emails acknowledge a request, not a confirmed appointment.
+
+Posteo is the default sender. In Netlify **Project configuration > Environment variables**, add `SMTP_PASSWORD` with Irene's Posteo password for SMTP (or the applicable app password). Scope it to **Functions** and the production deploy context. Do not put it in `netlify.toml`.
+
+These settings are already supplied by the code and only need environment variables if overriding them:
+
+| Variable | Value |
+| --- | --- |
+| `SMTP_HOST` | `posteo.de` |
+| `SMTP_PORT` | `465` (TLS) |
+| `SMTP_USER` | `pauselistenunfold@posteo.com`; override if Irene's Posteo login differs |
+| `MAIL_FROM` | `pauselistenunfold@posteo.com` |
+
+Enter secrets directly in Netlify, never in site files or chat. Redeploy after setting them. Deploy using the connected Git repository or Netlify CLI with functions support; uploading only the static website folder does not deploy the email function.
+
+The form's on-page success message confirms Netlify received the submission, not email delivery. Check the `submission-created` function logs for delivery failures. A successful SMTP response means the mail server accepted the emails; check both recipient inboxes and spam folders to confirm arrival.
+
+If native Netlify email notifications are already configured for Irene, remove the duplicate notification only after testing the function successfully. The function itself sends Irene's copy.
+
+Run `npm ci`, `npm test`, and `npm run build` locally. Tests use a fake mail sender and send no real messages. A live submission is still required to verify Netlify's event trigger and both inboxes. There is no durable retry queue: if sending fails, the original submission remains in Netlify for follow-up; replaying an event can duplicate an already-sent email.
 
 The booking calendar is a lightweight picker: it does not check Irene's real calendar.
 

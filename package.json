@@ -1,0 +1,15 @@
+{
+  "name": "pause-listen-unfold",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs",
+    "test": "node --test test/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "nodemailer": "^10.1.2"
+  }
+}
