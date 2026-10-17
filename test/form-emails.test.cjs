@@ -37,3 +37,25 @@ test('reports rejected SMTP recipients and accepts successful sends', async () =
   await assert.rejects(deliver([{}], { sendMail: async () => ({ rejected: ['owner@example.com'] }) }), /owner notification/);
   await deliver([{}, {}], { sendMail: async () => ({ rejected: [] }) });
 });
+test('reports authentication diagnostics without exposing secrets or raw SMTP responses', async () => {
+  const error = Object.assign(new Error('password secret-value'), {
+    code: 'EAUTH', responseCode: 535,
+    command: 'AUTH PLAIN secret-value', response: '535 secret-value visitor@example.com'
+  });
+  await assert.rejects(deliver([{}], { sendMail: async () => { throw error; } }), failure => {
+    assert.match(failure.message, /EAUTH; SMTP 535; stage AUTH/);
+    assert.doesNotMatch(failure.message, /secret-value|visitor@example.com/);
+    return true;
+  });
+});
+test('distinguishes network failures and suppresses unexpected error fields', async () => {
+  for (const code of ['ETIMEDOUT', 'ECONNECTION', 'secret-value']) {
+    await assert.rejects(deliver([{}], { sendMail: async () => {
+      throw { code, responseCode: 'secret-value', command: 'secret-value' };
+    } }), failure => {
+      assert.match(failure.message, new RegExp(code === 'secret-value' ? 'SMTP_FAILURE' : code));
+      assert.doesNotMatch(failure.message, /secret-value/);
+      return true;
+    });
+  }
+});
