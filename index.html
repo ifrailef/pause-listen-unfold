@@ -84,16 +84,14 @@
             <article class="card">
               <h3>Inquiry Circle</h3>
               <p>Offered monthly, Inquiry Circle is a recurring space for shared exploration, authentic connection and individual search. Through silence, embodied awareness and honest conversation, we meet questions that support individual growth and responsibility.</p>
-              <a class="btn btn-primary card-btn" href="https://luma.com/8p664b5k" target="_blank" rel="noopener">Register</a>
+              <a class="btn btn-primary card-btn" href="https://luma.com/inquiry-circle" target="_blank" rel="noopener">Register</a>
               <img src="assets/inquiry-circle-sketch.jpg" alt="" class="card-sketch">
             <p class="meta">Limited Spaces · Online</p>
             </article>
             <article class="card">
-              <h3>Common Ground</h3>
-              <p>Common Ground brings together independent practitioners with a commitment to presence and curiosity towards meeting each other as we are. You might come to sit in meditation, explore a question with others, or find someone to work with individually. Each offer has its own format and scope, shaped by the practitioner facilitating it.</p>
-              <a class="btn btn-primary card-btn" href="https://www.instagram.com/commonground_space/" target="_blank" rel="noopener">Learn more</a>
-              <img src="assets/common-ground-sketch.jpg" alt="" class="card-sketch">
-            <p class="meta">Awareness related events · Online</p>
+              <h3>Inquiry Intensive</h3>
+              <p>Inquiry Intensive is a monthly, one-hour experiential gathering for people who have joined us at a previous Inquiry Circle event. We draw on inquiry practices with roots in Zen traditions alongside contemporary mindful communication.</p>
+              <a class="btn btn-primary card-btn" href="https://luma.com/inquiry-circle" target="_blank" rel="noopener">Register</a>
             </article>
             <article class="card">
               <h3><span>The Unknown Retreat</span> <span class="coming-soon-tag">(Coming Soon)</span></h3>
@@ -155,20 +153,11 @@
               <button type="button" class="btn btn-primary" id="bookingToggle" aria-expanded="false" aria-controls="bookingPanel">Book Free Orientation Call</button>
 
           <div class="booking-panel" id="bookingPanel" hidden>
-            <p class="booking-intro">Choose a day and time that works for you.</p>
+            <p class="booking-intro">Leave your name and email and I will be in touch to arrange a time.</p>
 
-            <div class="booking-calendar" id="bookingCalendar" role="group" aria-label="Choose a date"></div>
-
-            <div class="booking-slots" id="bookingSlots" hidden aria-live="polite"></div>
-
-            <form class="booking-form" id="bookingForm" name="booking" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="booking-bot-field" hidden>
+            <form class="booking-form" id="bookingForm" name="booking" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="booking-bot-field">
               <input type="hidden" name="form-name" value="booking">
-              <input type="hidden" name="subject" data-remove-prefix value="Orientation call request — %{submissionId}">
-              <input type="hidden" name="date" id="bookingDateField">
-              <input type="hidden" name="time" id="bookingTimeField">
               <p class="hidden-field"><label>Don't fill this out if you're human: <input name="booking-bot-field"></label></p>
-
-              <p class="booking-selection" id="bookingSelection"></p>
 
               <label for="bookingName">Name</label>
               <input type="text" id="bookingName" name="name" required>
@@ -187,6 +176,13 @@
       <div class="section-label">
         <h2 class="display-md">One-to-One<br>Sessions</h2>
       </div>
+    </div>
+    <div class="wrap testimonials reveal-fade">
+          <h3>Testimonials</h3>
+          <blockquote>
+            <p>I did sessions Irene, which helped me move forward a great deal. With her natural, calm, and grounded demeanor, Irene created a space in which I felt safe and supported. This made it easy for me to engage in my inner processes. Through her empathetic approach, she guided me step by step through this journey. Along the way, she gently drew my attention to subtle inner shifts, emotions, and my body language. She helped me find the courage to show my emotions and held the space for them 100%. Working with Irene was deeply effective and valuable. It was a great enrichment in helping me navigate inner processes and release blockages, and it helped me immensely to place more trust in myself and my inner potential.</p>
+            <footer class="testimonial-author">Anandarupadasi</footer>
+          </blockquote>
     </div>
   </section>
   </div>
@@ -245,7 +241,6 @@
 
       <form class="contact-form" name="contact" method="POST" action="/thank-you.html" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="contact">
-        <input type="hidden" name="subject" data-remove-prefix value="New contact — %{submissionId}">
         <p class="hidden-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
 
         <label for="name">Name</label>

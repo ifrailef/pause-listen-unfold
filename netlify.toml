@@ -1,6 +1,8 @@
 [build]
-  command = "npm run build"
-  publish = "public"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/*"
